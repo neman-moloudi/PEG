@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+
+  <assemblyIdentity name="PEG" version="1.0.0.0"></assemblyIdentity>
+
+  <clrClass clsid="{182b15d0-489f-493e-9e20-843695a8a33e}" progid="PEG.StandardAddInServer" threadingModel="Both" name="PEG.StandardAddInServer" runtimeVersion=""></clrClass>
+
+  <file name="PEG.dll" hashalg="SHA1"></file>
+
+</assembly>

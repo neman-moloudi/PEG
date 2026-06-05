@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "PEG": {
+      "commandName": "Project"
+    },
+    "Launch Inventor 2025": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\Inventor 2025\\Bin\\Inventor.exe"
+    }
+  }
+}
