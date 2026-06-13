@@ -1,10 +1,14 @@
 using Inventor;
 using Microsoft.Win32;
+using PEG.Equipments;
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using System.Windows.Forms;
 
 namespace PEG
 {
+    [SupportedOSPlatform("windows")]
     /// <summary>
     /// This is the primary AddIn Server class that implements the ApplicationAddInServer interface
     /// that all Inventor AddIns are required to implement. The communication between Inventor and
@@ -62,7 +66,36 @@ namespace PEG
 
         private void createNewEquipment_OnExecute(NameValueMap context)
         {
+            // Define Form variables for different steps of Add-in GUI
+            EquipmentForm equipmentStep = null;
 
+            // Creating wizard steps
+            int step = 1;
+            while (step >= 1)
+            {
+                DialogResult r;
+                switch (step)
+                {
+                    case 1:
+                        if (equipmentStep == null) equipmentStep = new EquipmentForm();
+                        r = equipmentStep.ShowDialog();
+                        if (r == DialogResult.OK) 
+                        {
+                            if (equipmentStep.isPressureVessel) step = 21;
+                            else if (equipmentStep.isTank) step = 22;
+                            else if (equipmentStep.isHeatExchanger) step = 23;
+                            else return;
+                        }
+                        if (r == DialogResult.Cancel) return;
+                        break;
+                    case 21:
+                        break;
+                    case 22:
+                        break;
+                    case 23:
+                        break;
+                }
+            }
         }
         private void AddToDoc(ButtonDefinition button, string ribbon, string docType)
         {
