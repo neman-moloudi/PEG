@@ -13,7 +13,7 @@
 	<OutputPath>C:\Users\molou\AppData\Roaming\Autodesk\Inventor 2025\Addins\PEG</OutputPath>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>InvAddIn</RootNamespace>
+    <RootNamespace>PEG</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>

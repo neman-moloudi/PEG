@@ -17,6 +17,11 @@ namespace PEG
         // Inventor application object.
         private Inventor.Application m_inventorApplication;
 
+        // Buttons
+        private ButtonDefinition _btnCreateNewEquipment;
+
+        string appID = "{182b15d0-489f-493e-9e20-843695a8a33e}";
+
         public StandardAddInServer()
         {
         }
@@ -32,8 +37,47 @@ namespace PEG
             // Initialize AddIn members.
             m_inventorApplication = addInSiteObject.Application;
 
-            // TODO: Add ApplicationAddInServer.Activate implementation.
-            // e.g. event initialization, command creation etc.
+            // Add a Button to create new Equipment
+            ControlDefinitions ctrlDef = m_inventorApplication.CommandManager.ControlDefinitions;
+            _btnCreateNewEquipment = ctrlDef.AddButtonDefinition(
+                "New Equipment",
+                "New Equipment",
+                CommandTypesEnum.kQueryOnlyCmdType,
+                appID,
+                "Creates new Equipment",
+                "Create new Equipment",
+                //To Do - Add icon for this Button
+                ButtonDisplayEnum.kAlwaysDisplayText);
+            _btnCreateNewEquipment.OnExecute += createNewEquipment_OnExecute;
+
+            if (firstTime)
+            {
+                // Add the Add-In to all kind of documents like Part, Assembly, Drawing and Zero Doc
+                AddToDoc(_btnCreateNewEquipment, "Create", "ZeroDoc");
+                AddToDoc(_btnCreateNewEquipment, "Create", "Part");
+                AddToDoc(_btnCreateNewEquipment, "Create", "Assembly");
+                AddToDoc(_btnCreateNewEquipment, "Create", "Drawing");
+            }
+        }
+
+        private void createNewEquipment_OnExecute(NameValueMap context)
+        {
+
+        }
+        private void AddToDoc(ButtonDefinition button, string ribbon, string docType)
+        {
+            Ribbon docRibbon = m_inventorApplication.UserInterfaceManager.Ribbons[docType];
+            RibbonTab myTab = docRibbon.RibbonTabs.Add(
+                "PEG",
+                "PEG",
+                appID
+            );
+            RibbonPanel myPanel = myTab.RibbonPanels.Add(
+                ribbon,
+                ribbon,
+                appID
+            );
+            myPanel.CommandControls.AddButton(button, true);
         }
 
         public void Deactivate()
