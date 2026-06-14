@@ -59,6 +59,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Equipments\EquipmentForm.cs" />
+    <Compile Include="Equipments\HeatExchangers\HeatExchangerForm.cs" />
+    <Compile Include="Equipments\Tanks\TankForm.cs" />
+    <Compile Include="Equipments\Vessels\HorizontalVesselSuppport.cs" />
+    <Compile Include="Equipments\Vessels\NozzleForm.cs" />
+    <Compile Include="Equipments\Vessels\NozzleListForm.cs" />
+    <Compile Include="Equipments\Vessels\PressureVesselForm.cs" />
+    <Compile Include="Equipments\Vessels\VerticalVesselSupport.cs" />
+    <Compile Include="Equipments\Vessels\VesselParts.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="StandardAddInServer.cs" />
   </ItemGroup>
@@ -82,11 +90,6 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Equipments\HeatExchangers\" />
-    <Folder Include="Equipments\Tanks\" />
-    <Folder Include="Equipments\Vessels\" />
   </ItemGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="WHERE MT.EXE&#xD;&#xA;IF ERRORLEVEL 1 call &quot;$(DevEnvDir)..\..\VC\Auxiliary\Build\vcvarsall.bat&quot; amd64&#xD;&#xA;mt.exe -manifest &quot;$(ProjectDir)PEG.X.manifest&quot; -outputresource:&quot;$(TargetPath)&quot;;#2" />

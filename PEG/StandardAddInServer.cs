@@ -1,6 +1,9 @@
 using Inventor;
 using Microsoft.Win32;
 using PEG.Equipments;
+using PEG.Equipments.HeatExchangers;
+using PEG.Equipments.Tanks;
+using PEG.Equipments.Vessels;
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -68,6 +71,11 @@ namespace PEG
         {
             // Define Form variables for different steps of Add-in GUI
             EquipmentForm equipmentStep = null;
+            PressureVesselForm pressureVesselStep = null;
+            TankForm tankStep = null;
+            HeatExchangerForm heatExchangerStep = null;
+            VerticalVesselSupport verticalVesselSupportStep = null;
+            NozzleListForm nozzleListStep = null;
 
             // Creating wizard steps
             int step = 1;
@@ -76,23 +84,63 @@ namespace PEG
                 DialogResult r;
                 switch (step)
                 {
-                    case 1:
-                        if (equipmentStep == null) equipmentStep = new EquipmentForm();
-                        r = equipmentStep.ShowDialog();
-                        if (r == DialogResult.OK) 
+                    case 1: // Select the Equipment type 
+                        if (equipmentStep == null) equipmentStep = new EquipmentForm(); // Checks if form is created when not creates a new one.
+                        r = equipmentStep.ShowDialog(); // Shows the equipment selction Form
+                        if (r == DialogResult.OK) // By clicking Next goes to Next Step
                         {
-                            if (equipmentStep.isPressureVessel) step = 21;
-                            else if (equipmentStep.isTank) step = 22;
-                            else if (equipmentStep.isHeatExchanger) step = 23;
+                            if (equipmentStep.isPressureVessel) step = 21; // If Pressue Vessel is selected goes to Pressure Vessel Step
+                            else if (equipmentStep.isTank) step = 22;  // Tank Step
+                            else if (equipmentStep.isHeatExchanger) step = 23; // Heat Exchanger Step
                             else return;
                         }
-                        if (r == DialogResult.Cancel) return;
+                        if (r == DialogResult.Cancel) return; // Cancels the process and closes the Form
                         break;
                     case 21:
+                        if (pressureVesselStep == null) pressureVesselStep = new PressureVesselForm(); // Checks if the Pressure Vessel Form created 
+                        DialogResult r21 = pressureVesselStep.ShowDialog();
+                        if (r21 == DialogResult.OK)
+                        {
+                            if (pressureVesselStep._rbVertical.Checked) step = 211; // If the Vertical Radio Button is checked goes to select Support for Vertical Vessels
+                            else step = 212; // goes for selecting Support for Horizontal Vessels
+                        }
+                        else if (r21 == DialogResult.Abort) step = 1; // Goes back to Equipment selction Step
+                        else if (r21 == DialogResult.Cancel) return;
+                        else return;
                         break;
                     case 22:
+                        if (tankStep == null) tankStep = new TankForm();
+                        r = tankStep.ShowDialog();
+                        if (r == DialogResult.OK) step = 1;
+                        if (r == DialogResult.Abort) step = 1;
+                        if (r == DialogResult.Cancel) return;
                         break;
                     case 23:
+                        if (heatExchangerStep == null) heatExchangerStep = new HeatExchangerForm();
+                        r = heatExchangerStep.ShowDialog();
+                        if (r == DialogResult.OK) step = 1;
+                        if (r == DialogResult.Abort) step = 1;
+                        if (r == DialogResult.Cancel) return;
+                        break;
+                    case 211:
+                        if (verticalVesselSupportStep == null) verticalVesselSupportStep = new VerticalVesselSupport();
+                        DialogResult r211 = verticalVesselSupportStep.ShowDialog();
+                        if (r211 == DialogResult.OK) step = 2111;
+                        if (r211 == DialogResult.Abort) step = 21;
+                        if (r211 == DialogResult.Cancel) return;
+                        break;
+                    case 212: 
+                        break;
+                    case 2111 :
+                        if (nozzleListStep == null) nozzleListStep = new NozzleListForm(pressureVesselStep);
+                        DialogResult r2111 = nozzleListStep.ShowDialog();
+                        if (r2111 == DialogResult.Continue) step = -1;
+                        if (r2111 == DialogResult.Abort) step = 211;
+                        if (r2111 == DialogResult.Yes) step = 2111;
+                        if (r2111 == DialogResult.Ignore) step = 2111;
+                        if (r2111 == DialogResult.Cancel) return;
+                        break;
+                    case 2121: 
                         break;
                 }
             }

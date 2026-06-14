@@ -22,7 +22,7 @@ namespace PEG.Equipments
         private Button _btnOK, _btnCancel;
 
         // Helper variable 
-        public bool isPressureVessel;
+        public bool isPressureVessel = true;
         public bool isTank;
         public bool isHeatExchanger;
 
@@ -52,20 +52,17 @@ namespace PEG.Equipments
             {
                 isPressureVessel = true;
                 isTank = false; isHeatExchanger = false;
-                debug();
             };
             _rbTank.CheckedChanged += (s, e) =>
             {
                 isPressureVessel = false;
                 isTank = true; isHeatExchanger = false;
-                debug();
             };
             _rbHeatExchanger.CheckedChanged += (s, e) =>
             {
                 isPressureVessel = false;
                 isTank = false;
                 isHeatExchanger = true;
-                debug();
             };
             #endregion
 
@@ -80,18 +77,12 @@ namespace PEG.Equipments
             #region Control Buttons
             var grpControlBtn = new GroupBox { Text ="", Left = FormHelper.formW - 2 * FormHelper.btnW - 4 * FormHelper.leftM, Top = FormHelper.formH - FormHelper.btnH - 3 * FormHelper.topM, Width = 2*FormHelper.btnW + 2 *FormHelper.leftM, Height = FormHelper.btnH + (2 * FormHelper.btnTM) };
             x = FormHelper.btnLM; y = 0;//FormHelper.btnTM;
-            FormHelper.AddButtonInRow(grpControlBtn, "Next", _btnOK, ref x, y, DialogResult.OK);
-            FormHelper.AddButtonInRow(grpControlBtn, "Cancel", _btnCancel, ref x, y, DialogResult.Cancel);
-            MessageBox.Show("Control box height:" + grpControlBtn.Height + "\n" + "Button Height:" + FormHelper.btnH + "\n" + " Button Top:" );
+            FormHelper.AddButtonInRow(grpControlBtn, "Next", ref _btnOK, ref x, DialogResult.OK);
+            FormHelper.AddButtonInRow(grpControlBtn, "Cancel", ref _btnCancel, ref x, DialogResult.Cancel);
             #endregion
 
 
             Controls.AddRange(new Control[] { grpEqType, grpProjectInfos, grpControlBtn });
-        }
-        private void debug()
-        {
-            MessageBox.Show("Pressure Vessel:" + isPressureVessel + "\n" +
-                "Tank:" + isTank + "\n" + "Heat Exchanger:" + isHeatExchanger);
         }
     }
 }

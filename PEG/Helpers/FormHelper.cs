@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PEG.Equipments.Vessels;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -24,6 +25,22 @@ namespace PEG.Helpers
         public const int btnHM = 20; // Button Horizontal Margin
         public const int btnLM = 10; // Button Left Margin
         public const int btnTM = 20; // Button Top Margin
+
+        public static void AddListRow(GroupBox grp, string[] label, int x, int y, int w, int h)
+        {
+            foreach (string s in label)
+            {
+                grp.Controls.Add(new Label
+                {
+                    Text = s,
+                    Left = x,
+                    Top = y,
+                    Width = w,
+                    Height = h
+                });
+                x += 110;
+            }
+        }
         public static void AddRow(GroupBox grp, string label, int x, ref int y)
         {
             grp.Controls.Add(new Label
@@ -76,11 +93,34 @@ namespace PEG.Helpers
             y += 40;
         }
 
-        public static void AddButtonInRow(GroupBox grp, string label, Button button, ref int x, int y, DialogResult dialogresult)
+        public static void AddButtonInRow(GroupBox grp, string label, ref Button button, ref int x, DialogResult dialogresult)
         {
-            button = new Button { Text = label, DialogResult = dialogresult, Left = x, Top = y, Width = btnW, Height = btnH };
+            button = new Button { Text = label, DialogResult = dialogresult, Left = x, Top = btnTM, Width = btnW, Height = btnH };
             grp.Controls.Add(button);
             x += btnW + btnHM;
         }
+
+        public static Button AddRemoveButton(GroupBox grp, ref int y)
+        {
+            var rem = new Button { Text = "✕ Remove", Left = 3 * leftM + 2 * boxW, Top = y, Width = btnW, Height = btnH };
+            grp.Controls.Add(rem);
+            return rem;
+        }
+
+        public static bool Pos(TextBox tb, out double v) =>
+            double.TryParse(tb?.Text?.Trim(),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out v) && v > 0;
+
+        public static void Warn(string msg)
+        {
+            MessageBox.Show(msg, "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            DialogResult dialogResult = DialogResult.None;
+        }
+
+        public static bool GTE0(TextBox tb, out double v) =>
+            double.TryParse(tb?.Text?.Trim(),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out v) && v >= 0;
     }
 }
