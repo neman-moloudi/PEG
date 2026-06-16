@@ -17,7 +17,7 @@ namespace PEG.Equipments
         // Form Variables
         private RadioButton _rbVessel, _rbTank, _rbHeatExchanger; // Radio Buttons to select equipment type
 
-        private TextBox _tbProjName, _tbEqName, _tbEqTag;
+        public TextBox _tbProjName, _tbEqName, _tbEqTag;
 
         private Button _btnOK, _btnCancel;
 

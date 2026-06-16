@@ -4,7 +4,12 @@ using PEG.Equipments;
 using PEG.Equipments.HeatExchangers;
 using PEG.Equipments.Tanks;
 using PEG.Equipments.Vessels;
+using PEG.Equipments.Vessels.Model;
+using PEG.Equipments.Vessels.Model.MainParts;
+using PEG.Equipments.Vessels.Model.Supports;
 using System;
+using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Windows.Forms;
@@ -143,6 +148,121 @@ namespace PEG
                     case 2121: 
                         break;
                 }
+            }
+
+            try
+            {
+                var modelBuilder = new VesselModelBuilder(
+                    m_inventorApplication,
+                    equipmentStep._tbProjName.Text,
+                    equipmentStep._tbEqName.Text,
+                    equipmentStep._tbEqTag.Text);
+
+                modelBuilder.CreateProject();
+
+                foreach (VesselParts part in pressureVesselStep.Parts)
+                {
+                    if (part is VesselShell shell)
+                    {
+                        ShellBuilder shellBuilder = new ShellBuilder();
+                        shellBuilder.Build(shell, modelBuilder.PartsFolder, m_inventorApplication);
+                    }
+                    else if (part is VesselHead head)
+                    {
+                        switch (head.HeadType)
+                        {
+                            case "Ellipsoidal 2:1":
+                                TorisphericalHeadBuilder ellipsoidal2Builder = new TorisphericalHeadBuilder();
+                                ellipsoidal2Builder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Ellipsoidal 1.9:1":
+                                TorisphericalHeadBuilder ellipsoidal19Builder = new TorisphericalHeadBuilder();
+                                ellipsoidal19Builder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Hemispherical":
+                                HemisphericalHeadBuilder hemisphericalHeadBuilder = new HemisphericalHeadBuilder();
+                                hemisphericalHeadBuilder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Torispherical (Klöpper / DIN 28011)":
+                                TorisphericalHeadBuilder klopperHeadBuilder = new TorisphericalHeadBuilder();
+                                klopperHeadBuilder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Korbbogen (DIN 28013)":
+                                TorisphericalHeadBuilder korbbogenBuilder = new TorisphericalHeadBuilder();
+                                korbbogenBuilder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Flat":
+                                FlatHeadBuilder flatHeadBuilder = new FlatHeadBuilder();
+                                flatHeadBuilder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            case "Conical":
+                                ConicalHeadBuilder conicalHeadBuilder = new ConicalHeadBuilder();
+                                conicalHeadBuilder.Build(head, modelBuilder.PartsFolder, m_inventorApplication);
+                                //headsBuilt++;
+                                break;
+                            default:
+                                //headsSkipped++;
+                                break;
+                        }
+                    }
+                    else if (part is VesselCone cone)
+                    {
+                        ConeSectionBuilder coneBuilder = new ConeSectionBuilder();
+                        coneBuilder.Build(cone, modelBuilder.PartsFolder, m_inventorApplication);
+                        //cones++;
+                    }
+                }
+
+                string type = verticalVesselSupportStep._combSupportType.SelectedItem.ToString();
+                string supportFilePath = null;
+                VesselHead bottom_Head = pressureVesselStep.Parts.OfType<VesselHead>().FirstOrDefault();
+                switch (type)
+                {
+                    case "Skirt":
+                        {
+                            SkirtBuilder skirtBuilder = new SkirtBuilder();
+                            skirtBuilder.Build(verticalVesselSupportStep.skirt, modelBuilder.PartsFolder, m_inventorApplication);
+                            supportFilePath = modelBuilder.PartPath("Skirt");
+                            break;
+                        }
+                    case "Legs":
+                        {
+                            LegBuilder legBuilder = new LegBuilder();
+                            legBuilder.Build(verticalVesselSupportStep.leg, modelBuilder.PartsFolder, bottom_Head, m_inventorApplication);
+                            supportFilePath = modelBuilder.PartPath("Leg");
+                            break;
+                        }
+                    case "Lugs":
+                        {
+                            LugBuilder lugBuilder = new LugBuilder();
+                            lugBuilder.Build(verticalVesselSupportStep.lug, modelBuilder.PartsFolder, m_inventorApplication);
+                            supportFilePath = modelBuilder.PartPath("Lugs");
+                            break;
+                        }
+                    case "Bracket":
+                        {
+                            BracketBuilder bracketBuilder = new BracketBuilder();
+                            bracketBuilder.Build(verticalVesselSupportStep.bracket, modelBuilder.PartsFolder, m_inventorApplication);
+                            supportFilePath = modelBuilder.PartPath("Bracket");
+                            break;
+                        }
+                }
+
+                modelBuilder.BuildAssembly(pressureVesselStep.Parts, supportFilePath);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "Error during modeling: \n" + ex.Message,
+                    "Modeling Error",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Error);
             }
         }
         private void AddToDoc(ButtonDefinition button, string ribbon, string docType)
